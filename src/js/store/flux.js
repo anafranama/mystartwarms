@@ -2,12 +2,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			peoples: null,
-
 			planets: null,
-
 			vehicles: null,
-
-			favoritos: []
+			favoritos: [],
+			actual_user: "Ingrese a",
+			actual_user_2: "su cuenta",
+			token: null
 		},
 		actions: {
 			getPeople: url => {
@@ -53,13 +53,42 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 			},
 			favoritos: fav => {
-				setStore({ favoritos: [...getStore().favoritos, fav] });
+				let alreadyFav = false;
+				let favArr = getStore().favoritos;
+
+				if (favArr.length === 0) {
+					setStore({ favoritos: [...favArr, fav] });
+				} else {
+					favArr.forEach(element => {
+						if (element.uid === fav.uid) {
+							alreadyFav = true;
+						}
+					});
+					if (!alreadyFav) {
+						setStore({ favoritos: [...favArr, fav] });
+					}
+				}
+				//setStore({ favoritos: [...getStore().favoritos, fav] });
 			},
 			eliminar: elementoEliminar => {
 				setStore({
 					favoritos: getStore().favoritos.filter(fav => {
 						return fav !== elementoEliminar;
 					})
+				});
+			},
+			login: () => {
+				setStore({
+					actual_user: sessionStorage.getItem("actual_user"),
+					actual_user_2: sessionStorage.getItem("actual_user_2"),
+					token: sessionStorage.getItem("u_token")
+				});
+			},
+			logOut: () => {
+				setStore({
+					actual_user: "Ingrese a",
+					actual_user_2: "su cuenta",
+					token: null
 				});
 			}
 		}
